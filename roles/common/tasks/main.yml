@@ -1,0 +1,21 @@
+---
+- name: update apt cache
+  sudo: true
+  apt: update-cache=yes cache_valid_time=3600
+
+- name: install base packages
+  sudo: true
+  apt: pkg={{ item }} state=present
+  with_items:
+  - build-essential
+  - git
+  - vim
+  - golang
+  - curl
+  - git
+  - python-setuptools
+  - python-pycurl
+  - python-jinja2
+  - python-yaml
+
+- include: pip.yml
