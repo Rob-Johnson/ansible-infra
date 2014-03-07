@@ -1,0 +1,7 @@
+---
+
+- name: run the paintedfox/postgresql docker image
+  docker: image=paintedfox/postgresql name=postgresql  ports=5432:5432  env="USER={{ postgres_user }},PASS={{ postgres_password }}" volumes=/srv/postgresql:/data
+
+- name: install the postgres client
+  apt: pkg=postgresql-client state=present
