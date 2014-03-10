@@ -1,6 +1,5 @@
 ---
 - hosts: webservers
   roles:
-    - common
-    - angstwad.docker_ubuntu
+    - webapp
 
