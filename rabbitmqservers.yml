@@ -1,0 +1,6 @@
+---
+ 
+- hosts: rabbitmq-servers
+  roles:
+    -  rabbitmq
+
