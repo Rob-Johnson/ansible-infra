@@ -1,0 +1,33 @@
+---
+
+- name: create a tmp dir to build docker image
+  file: path={{ app_deploy_dir }} state=directory
+  tags:
+    - deploy
+
+- name: download latest version of findMe
+  git: repo=git@github.com:Rob-Johnson/findMe.git dest={{ app_deploy_dir }}/findMe ssh_opts="-o StrictHostKeyChecking=no"
+  tags: 
+    - deploy
+    - gh
+
+- name: copy the template
+  template: src=findme_dockerfile.j2 dest={{  app_deploy_dir }}/Dockerfile
+  tags: 
+    - deploy
+
+- name: build the docker image
+  command: docker build -t findMe -rm . chdir={{ app_deploy_dir }}
+  tags:
+    - deploy
+
+- name: clean up app dir
+  file: path={{ app_deploy_dir }} state=absent
+  tags: 
+    - deploy
+
+- name: run the image
+  docker: name=findMe  port:3000:3000 links:postgresql:db
+  tags: 
+    - deploy
+  

@@ -1,0 +1,27 @@
+## greglearns/ruby provides us with ruby 2.0.0-p47 by default
+## along with RubyGems and Bundler
+## this is a bit nasty in how it uses a fixed ssh key I generated just for
+## use by this, but I can't think of anything better for now.
+
+FROM greglearns/ruby
+
+## normally needed to compile gems with native extensions
+RUN apt-get update
+RUN apt-get install -y make
+RUN apt-get install -y gcc
+RUN apt-get install -y libxslt-dev libxml2-dev libpq-dev build-essential
+
+## add the app
+ADD findMe /srv/www/findMe
+
+WORKDIR /srv/www/findMe
+
+## install the gems
+RUN bundle install --without development test
+
+## run db:create db:migrate
+RUN bundle exec rake db:create
+RUN bundle exec rake db:migrate
+
+## start the app
+RUN bundle exec unicorn -E production -c config/unicorn.rb
