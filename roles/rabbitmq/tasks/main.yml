@@ -1,0 +1,20 @@
+---
+
+- include_vars: "passwords.yml"
+
+- name: make a directory for building the image
+  file: dest={{ build_directory }} state=directory
+  tags: rabbitmq
+
+- name: add the dockerfile for rabbitmq
+  template: src=rabbitmq_dockerfile.j2 dest={{ build_directory }}/Dockerfile
+  tags: rabbitmq
+
+- name: build the image
+  command: docker build -t rabbitmq -rm . chdir={{ build_directory }}
+  tags: rabbitmq
+
+- name: run the image
+  docker: image=rabbitmq name=rabbitmq ports=5672:5672
+  tags: deploy-rabbit
+
