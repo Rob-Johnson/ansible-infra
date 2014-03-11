@@ -11,13 +11,19 @@
     - deploy
     - gh
 
+- name: copy the start script
+  copy: src=run_app.sh dest={{ app_deploy_dir }}/run_app.sh
+  tags:
+    - deploy
+
+
 - name: copy the template
   template: src=findme_dockerfile.j2 dest={{  app_deploy_dir }}/Dockerfile
   tags: 
     - deploy
 
 - name: build the docker image
-  command: docker build -t findMe -rm . chdir={{ app_deploy_dir }}
+  command: docker build -t robj/findme -rm . chdir={{ app_deploy_dir }}
   tags:
     - deploy
 
@@ -27,7 +33,7 @@
     - deploy
 
 - name: run the image
-  docker: name=findMe  port:3000:3000 links:postgresql:db
+  docker: image=robj/findme name=findme  ports=3000:3000 links=postgresql:db,rabbitmq:rmq
   tags: 
     - deploy
   
