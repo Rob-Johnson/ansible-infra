@@ -11,17 +11,22 @@ RUN apt-get install -y make
 RUN apt-get install -y gcc
 RUN apt-get install -y libxslt-dev libxml2-dev libpq-dev build-essential
 
-## add the app
-ADD findMe /srv/www/findMe
-
-WORKDIR /srv/www/findMe
-
-## install the gems
+# re run bundle install only if gems change
+# Copy the Gemfile and Gemfile.lock into the image. 
+# # Temporarily set the working directory to where they are. 
+WORKDIR /tmp 
+ADD findMe/Gemfile Gemfile
+ADD findMe/Gemfile.lock Gemfile.lock
 RUN bundle install --without development test
 
-## run db:create db:migrate
-RUN bundle exec rake db:create
-RUN bundle exec rake db:migrate
+## add the app
+ADD findMe /opt/findMe
+ADD run_app.sh /opt/findMe/
 
-## start the app
-RUN bundle exec unicorn -E production -c config/unicorn.rb
+## set the env
+ENV RAILS_ENV production
+
+## cd
+WORKDIR /opt/findMe
+
+CMD ./run_app.sh
