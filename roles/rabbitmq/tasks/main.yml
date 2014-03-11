@@ -11,10 +11,10 @@
   tags: rabbitmq
 
 - name: build the image
-  command: docker build -t rabbitmq -rm . chdir={{ build_directory }}
+  command: docker build -t robj/rabbitmq -rm . chdir={{ build_directory }}
   tags: rabbitmq
 
 - name: run the image
-  docker: image=rabbitmq name=rabbitmq ports=5672:5672
+  docker: image=robj/rabbitmq name=rabbitmq ports=5672:5672
   tags: deploy-rabbit
 
